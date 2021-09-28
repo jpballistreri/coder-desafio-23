@@ -4,25 +4,29 @@ import mongoose from "mongoose";
 import * as model from "../models/ecommerce";
 import Config from "../../config";
 
-class DBProductos {
-  constructor() {
-    this.URL = `mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`;
-  }
-
-  init() {
-    console.log("cargando base mongo");
-    (async () => {
-      try {
-        await mongoose.connect(this.URL);
-
-        console.log("MONGODB CONNECTED.");
-      } catch (e) {
-        console.log("Error: ", e);
+export const connectToDB = async () => {
+  try {
+    console.log("CONECTANDO A MI DB");
+    await mongoose.connect(
+      `mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
       }
-    })();
+    );
+    console.log("YA ESTOY CONECTADO");
+    return "Connection Established";
+  } catch (error) {
+    console.log(`ERROR => ${error}`);
+    return error;
   }
+};
+
+class Productos {
+  constructor() {}
 
   async get(id) {
+    console.log("entrando al get de productos");
     let output = [];
     try {
       if (id) {
@@ -51,39 +55,60 @@ class DBProductos {
   }
 }
 
-class DBMensajes {
+class Mensajes {
   constructor() {
-    const environment = process.env.NODE_ENV || "development_sqlite3";
-    console.log(`SETTING ${environment} DB`);
-    const options = dbConfig[environment];
-    this.connection = knex(options);
+    this.URL = `mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`;
   }
 
-  init() {
-    this.connection.schema.hasTable("mensajes").then((exists) => {
-      if (exists) return;
-      console.log("Creamos la tabla mensajes!");
-
-      return this.connection.schema
-        .createTable("mensajes", (mensajesTable) => {
-          mensajesTable.increments();
-          mensajesTable.string("email").notNullable();
-          mensajesTable.string("date").notNullable();
-          mensajesTable.string("texto");
-        })
-        .then(() => {
-          console.log("Done");
-        });
-    });
+  async get() {
+    console.log("adentro del get");
+    const output = await model.mensajes.find();
+    //console.log(output);
+    return output;
   }
 
-  async get(tableName) {
-    return this.connection(tableName);
-  }
-  async create(tableName, data) {
-    return this.connection(tableName).insert(data);
+  async create(mensaje) {
+    console.log(mensaje);
+
+    let messageToSave = new model.mensajes(mensaje);
+    let savedMessage = await messageToSave.save();
+    return savedMessage;
   }
 }
 
-export const DBService = new DBProductos();
-export const DBMensajesSqlite = new DBMensajes();
+//class DBMensajes {
+//  constructor() {
+//    const environment = process.env.NODE_ENV || "development_sqlite3";
+//    console.log(`SETTING ${environment} DB`);
+//    const options = dbConfig[environment];
+//    this.connection = knex(options);
+//  }
+//
+//  init() {
+//    this.connection.schema.hasTable("mensajes").then((exists) => {
+//      if (exists) return;
+//      console.log("Creamos la tabla mensajes!");
+//
+//      return this.connection.schema
+//        .createTable("mensajes", (mensajesTable) => {
+//          mensajesTable.increments();
+//          mensajesTable.string("email").notNullable();
+//          mensajesTable.string("date").notNullable();
+//          mensajesTable.string("texto");
+//        })
+//        .then(() => {
+//          console.log("Done");
+//        });
+//    });
+//  }
+
+//  async get(tableName) {
+//    return this.connection(tableName);
+//  }
+//  async create(tableName, data) {
+//    return this.connection(tableName).insert(data);
+//  }
+//}
+
+export const DBProductos = new Productos();
+export const DBMensajes = new Mensajes();

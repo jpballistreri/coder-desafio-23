@@ -87,8 +87,22 @@ function enviarFormulario(e) {
 function enviarMensaje(e) {
   e.preventDefault();
   let email = document.getElementById("mensajeEmail").value;
-  let texto = document.getElementById("mensajeTexto").value;
-  console.log(email, texto);
-  socket.emit("nuevo-mensaje", email, texto);
+  let nombre = document.getElementById("nombreTexto").value;
+  let apellido = document.getElementById("apellidoTexto").value;
+  let edad = document.getElementById("edadTexto").value;
+  let alias = document.getElementById("aliasTexto").value;
+  let avatar = document.getElementById("avatarTexto").value;
+  let mensaje = document.getElementById("mensajeTexto").value;
+  console.log(email, nombre, apellido, edad, alias, avatar, mensaje);
+  socket.emit(
+    "nuevo-mensaje",
+    email,
+    nombre,
+    apellido,
+    edad,
+    alias,
+    avatar,
+    mensaje
+  );
   document.getElementById("mensajeTexto").value = "";
 }

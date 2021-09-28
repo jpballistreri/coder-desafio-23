@@ -7,7 +7,7 @@ import { DBService, DBMensajesSqlite } from "./db";
 import * as http from "http";
 import { initWSServer } from "./socket";
 
-DBService.init();
+//DBService.init();
 //DBMensajesSqlite.init();
 
 /** INICIALIZACION API con EXPRESS */

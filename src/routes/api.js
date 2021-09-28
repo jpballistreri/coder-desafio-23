@@ -1,12 +1,12 @@
 import express from "express";
 import fs from "fs";
-import { DBService } from "../services/db";
+import { DBProductos } from "../services/db";
 import { FakerService } from "../services/faker";
 
 const router = express.Router();
 
 router.get("/productos/", async (req, res) => {
-  const items = await DBService.get();
+  const items = await DBProductos.get();
   res.json({
     data: items,
   });
@@ -15,7 +15,7 @@ router.get("/productos/", async (req, res) => {
 router.get("/productos/:id", async (req, res) => {
   const { id } = req.params;
 
-  const result = await DBService.get(id);
+  const result = await DBProductos.get(id);
   if (!result.length)
     return res.status(404).json({
       msgs: "Producto no encontrado!",
@@ -47,8 +47,8 @@ router.post("/productos/", async (req, res) => {
     thumbnail,
   };
 
-  const newProduct = await DBService.create(item);
-  //const newProduct = await DBService.get("productos", newId);
+  const newProduct = await DBProductos.create(item);
+  //const newProduct = await DBProductos.get("productos", newId);
   res.json({
     msj: "Producto agregado.",
     data: newProduct,
@@ -57,14 +57,14 @@ router.post("/productos/", async (req, res) => {
 
 router.delete("/productos/:id", async (req, res) => {
   const { id } = req.params;
-  const productoAEliminar = await DBService.get(id);
+  const productoAEliminar = await DBProductos.get(id);
   if (!productoAEliminar.length) {
     return res.status(400).json({
       msj: "No existe el producto.",
     });
   }
 
-  await DBService.delete(id);
+  await DBProductos.delete(id);
 
   res.json({
     Producto_eliminado: productoAEliminar,
@@ -87,7 +87,7 @@ router.put("/productos/:id", async (req, res) => {
     });
   }
 
-  const productoAActualizar = await DBService.get(id);
+  const productoAActualizar = await DBProductos.get(id);
   if (!productoAActualizar.length) {
     return res.status(400).json({
       msj: "No existe el producto.",
@@ -100,8 +100,8 @@ router.put("/productos/:id", async (req, res) => {
     thumbnail,
   };
 
-  await DBService.update(id, item);
-  const productoActualizado = await DBService.get(id);
+  await DBProductos.update(id, item);
+  const productoActualizado = await DBProductos.get(id);
   //console.log(await productoActualizado);
   res.json({
     Producto_actualizado: productoActualizado,

@@ -1,6 +1,6 @@
 import exp from "constants";
 import socketIo from "socket.io";
-import { DBService, DBMensajesSqlite } from "../services/db";
+import { DBProductos, DBMensajes } from "../services/db";
 import moment from "moment";
 //import myServer from "./server";
 
@@ -14,42 +14,52 @@ export const initWSServer = (server) => {
 
     socket.on("nuevo-producto", async () => {
       console.log("Nuevo Producto!");
-      const productos = await DBService.get();
+      const productos = await DBProductos.get();
       io.emit("array-productos", productos);
     });
 
-    socket.on("nuevo-mensaje", async (email, texto) => {
-      function validateEmail(email) {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
-      }
+    socket.on(
+      "nuevo-mensaje",
+      async (email, nombre, apellido, edad, alias, avatar, mensaje) => {
+        function validateEmail(email) {
+          const re = /\S+@\S+\.\S+/;
+          return re.test(email);
+        }
 
-      if (validateEmail(email) == false) {
-        socket.emit("mensaje-error", {
-          msj: "Por favor, ingrese un Email válido.",
-        });
-      } else {
-        ////Guarda mensaje
-        const nuevoMensaje = {
-          email: email,
-          date: `${moment().subtract(10, "days").calendar()} ${moment().format(
-            "LTS"
-          )}`,
-          texto: texto,
-        };
-        await DBMensajesSqlite.create("mensajes", nuevoMensaje);
-        const arrayMensajes = await DBMensajesSqlite.get("mensajes");
-        io.emit("array-mensajes", arrayMensajes);
+        if (validateEmail(email) == false) {
+          socket.emit("mensaje-error", {
+            msj: "Por favor, ingrese un Email válido.",
+          });
+        } else {
+          ////Guarda mensaje
+          const nuevoMensaje = {
+            author: {
+              email: email,
+              nombre: nombre,
+              apellido: apellido,
+              alias: alias,
+              edad: edad,
+              avatar: avatar,
+            },
+            text: mensaje,
+          };
+          await DBMensajes.create(nuevoMensaje);
+          const arrayMensajes = await DBMensajes.get();
+          io.emit("array-mensajes", arrayMensajes);
+        }
       }
-    });
+    );
 
     socket.on("get-productos", async () => {
-      const productos = await DBService.get();
+      console.log("productos");
+      const productos = await DBProductos.get();
+      console.log("productos");
+      console.log(productos);
       socket.emit("array-productos", productos);
     });
 
     socket.on("get-mensajes", async () => {
-      const mensajes = await DBMensajesSqlite.get("mensajes");
+      const mensajes = await DBMensajes.get();
       socket.emit("array-mensajes", mensajes);
     });
   });
