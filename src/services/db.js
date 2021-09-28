@@ -2,10 +2,11 @@ import knex from "knex";
 import dbConfig from "../../knexfile";
 import mongoose from "mongoose";
 import * as model from "../models/ecommerce";
+import Config from "../../config";
 
 class DBProductos {
   constructor() {
-    this.URL = "mongodb://172.17.0.3:27017/ecommerce";
+    this.URL = `mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`;
   }
 
   init() {
