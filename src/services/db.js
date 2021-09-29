@@ -3,6 +3,7 @@ import dbConfig from "../../knexfile";
 import mongoose from "mongoose";
 import * as model from "../models/ecommerce";
 import Config from "../../config";
+import { normalize, schema } from "normalizr";
 
 export const connectToDB = async () => {
   try {
@@ -61,15 +62,31 @@ class Mensajes {
   }
 
   async get() {
+    const author = new schema.Entity("author", {}, { idAttribute: "email" });
+
+    const msge = new schema.Entity(
+      "message",
+      {
+        author: author,
+      },
+      { idAttribute: "_id" }
+    );
+
+    const msgesSchema = new schema.Array(msge);
     console.log("adentro del get");
-    const output = await model.mensajes.find();
+    //const output = await model.mensajes.find();
+    let messages = (await model.mensajes.find()).map((aMsg) => ({
+      _id: aMsg._id,
+      author: aMsg.author,
+      text: aMsg.text,
+    }));
     //console.log(output);
-    return output;
+    let normalizedMessages = normalize(messages, msgesSchema);
+    return normalizedMessages;
   }
 
   async create(mensaje) {
     console.log(mensaje);
-
     let messageToSave = new model.mensajes(mensaje);
     let savedMessage = await messageToSave.save();
     return savedMessage;

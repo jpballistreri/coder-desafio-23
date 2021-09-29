@@ -1,12 +1,12 @@
 import express from "express";
 import fs from "fs";
-import { DBService } from "../services/db";
+import { DBProductos } from "../services/db";
 import { FakerService } from "../services/faker";
 
 const router = express.Router();
 
 router.get("/vista", async (req, res) => {
-  const arrayProductos = await DBService.get();
+  const arrayProductos = await DBProductos.get();
   console.log(arrayProductos);
 
   res.render("main", arrayProductos);

@@ -26,9 +26,17 @@ export const initWSServer = (server) => {
           return re.test(email);
         }
 
-        if (validateEmail(email) == false) {
+        if (
+          validateEmail(email) == false ||
+          !nombre ||
+          !apellido ||
+          !edad ||
+          !alias ||
+          !avatar ||
+          !mensaje
+        ) {
           socket.emit("mensaje-error", {
-            msj: "Por favor, ingrese un Email válido.",
+            msj: "Por favor, ingrese un Email válido y complete todos los campos.",
           });
         } else {
           ////Guarda mensaje
@@ -42,6 +50,7 @@ export const initWSServer = (server) => {
               avatar: avatar,
             },
             text: mensaje,
+            timestamp: moment().format(),
           };
           await DBMensajes.create(nuevoMensaje);
           const arrayMensajes = await DBMensajes.get();
@@ -51,7 +60,7 @@ export const initWSServer = (server) => {
     );
 
     socket.on("get-productos", async () => {
-      console.log("productos");
+      console.log("productossss");
       const productos = await DBProductos.get();
       console.log("productos");
       console.log(productos);

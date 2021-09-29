@@ -13,6 +13,7 @@ const mensajesSchema = new Mongoose.Schema({
     avatar: { type: String, required: true, max: 50 },
   },
   text: { type: String, required: true, max: 1000 },
+  timestamp: { type: String },
 });
 
 const productosSchema = new Mongoose.Schema({
