@@ -3,17 +3,14 @@ import dbConfig from "../../knexfile";
 import mongoose from "mongoose";
 import * as model from "../models/ecommerce";
 import Config from "../../config";
-import { normalize, schema } from "normalizr";
+//import { normalize, schema } from "normalizr";
 
 export const connectToDB = async () => {
   try {
     console.log("CONECTANDO A MI DB");
     await mongoose.connect(
-      `mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
+      //`mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`,
+      `mongodb+srv://${Config.MONGO_ATLAS_USER}:${Config.MONGO_ATLAS_PASSWORD}@${Config.MONGO_ATLAS_CLUSTER}/${Config.MONGO_ATLAS_DBNAME}?retryWrites=true&w=majority`
     );
     console.log("YA ESTOY CONECTADO");
     return "Connection Established";
@@ -27,7 +24,6 @@ class Productos {
   constructor() {}
 
   async get(id) {
-    console.log("entrando al get de productos");
     let output = [];
     try {
       if (id) {
@@ -57,32 +53,11 @@ class Productos {
 }
 
 class Mensajes {
-  constructor() {
-    this.URL = `mongodb://${Config.MONGO_LOCAL_IP}:${Config.MONGO_LOCAL_PORT}/${Config.MONGO_LOCAL_DBNAME}`;
-  }
+  constructor() {}
 
   async get() {
-    const author = new schema.Entity("author", {}, { idAttribute: "email" });
-
-    const msge = new schema.Entity(
-      "message",
-      {
-        author: author,
-      },
-      { idAttribute: "_id" }
-    );
-
-    const msgesSchema = new schema.Array(msge);
-    console.log("adentro del get");
-    //const output = await model.mensajes.find();
-    let messages = (await model.mensajes.find()).map((aMsg) => ({
-      _id: aMsg._id,
-      author: aMsg.author,
-      text: aMsg.text,
-    }));
-    //console.log(output);
-    let normalizedMessages = normalize(messages, msgesSchema);
-    return normalizedMessages;
+    const output = await model.mensajes.find();
+    return output;
   }
 
   async create(mensaje) {

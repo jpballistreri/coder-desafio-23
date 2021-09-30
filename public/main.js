@@ -1,7 +1,5 @@
 /////////////////////
 
-import { normalizr, schema, denormalize } from "normalizr";
-const { normalizr } = require("normalizr");
 ////////////WEBSOCKETS
 const socket = io.connect("http://localhost:8080", { forceNew: true });
 // Cuando arrancamos pedimos la data que hay actualmente enviando un socket
@@ -21,35 +19,10 @@ window.onload = function () {
 };
 
 function renderMensajes(data) {
-  console.log("MENSAJESSSSSSSSSZZZ");
-  console.log(data);
-
-  const author = new normalizr.schema.Entity(
-    "author",
-    {},
-    { idAttribute: "email" }
-  );
-
-  const msge = new normalizr.schema.Entity(
-    "message",
-    {
-      author: author,
-    },
-    { idAttribute: "_id" }
-  );
-
-  const msgesSchema = new normalizr.schema.Array(msge);
-
-  const denormalizedData = normalizr.denormalize(
-    data.result,
-    msgesSchema,
-    data.entities
-  );
-
-  let html = denormalizedData
+  let html = data
     .map(function (elem, index) {
       return `<p>
-              <span class="messageEmail">${elem.email}</span>  
+              <span class="messageEmail">${elem.author.email}</span>  
               <span class="messageDate">${elem.timestamp}</span>
               <span class="messageText">${elem.text}</span>
               </p>`;
