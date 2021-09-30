@@ -1,4 +1,5 @@
 import express from "express";
+import session from "express-session";
 import path from "path";
 import routerApi from "../routes/api.js";
 import web from "../routes/web.js";
@@ -29,7 +30,15 @@ initWSServer(myServer);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/*** DEFINICION ROUTERS ***/
+const oneMinute = 1000 * 60;
+app.use(
+  session({
+    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+    cookie: { maxAge: oneMinute },
+    saveUninitialized: true,
+    resave: true,
+  })
+);
 
 app.use("/api", routerApi);
 app.use("/productos", web);
