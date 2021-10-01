@@ -60,10 +60,7 @@ export const initWSServer = (server) => {
     );
 
     socket.on("get-productos", async () => {
-      console.log("productossss");
       const productos = await DBProductos.get();
-      console.log("productos");
-      console.log(productos);
       socket.emit("array-productos", productos);
     });
 

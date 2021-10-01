@@ -1,8 +1,6 @@
 h2 Ingrese su nombre
-form(id="login")
+form(class="form" action="/productos/login" method="post" role="form" autocomplete="off")
     div(class="form-group")
-        label(for="username")
-        input(id='username' class="form-control" type="text" placeholder="Lionel Messi")
-    
-    button(class="btn btn-success my-3" onclick="location.href = '/login'") Submit
-p(id="enviarLogin")
+        input(id="username" name='username' placeholder="nombre" class="form-control" type="text" required)
+    div(class="form-group")
+        input(class="btn btn-success my-3" type="submit" value="Login")

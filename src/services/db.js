@@ -61,7 +61,6 @@ class Mensajes {
   }
 
   async create(mensaje) {
-    console.log(mensaje);
     let messageToSave = new model.mensajes(mensaje);
     let savedMessage = await messageToSave.save();
     return savedMessage;
