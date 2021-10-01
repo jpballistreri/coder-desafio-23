@@ -10,6 +10,8 @@ html
         link(rel="stylesheet" href="../style.css")
     body
         h1 MercadoAutos.com
+        if username
+            h1 #{username} logueado
         include components/formularioIngresoProducto
         include components/listaProductos
         include components/centroDeMensajes

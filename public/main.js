@@ -66,7 +66,7 @@ socket.on("mensaje-error", (res) => {
 });
 
 function enviarFormulario(e) {
-  e.preventDefault();
+  //e.preventDefault();
   let title = document.getElementById("titulo_producto").value;
   let price = Number(document.getElementById("precio_producto").value);
   let thumbnail = document.getElementById("thumbnail").value;
